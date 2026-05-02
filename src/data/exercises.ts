@@ -1,0 +1,128 @@
+import type { ExerciseDef } from '@/types'
+
+export const EXERCISES: ExerciseDef[] = [
+  {
+    id: 'warmup-cardio',
+    name: 'Light cardio (warm-up)',
+    category: 'cardio',
+    tracking: 'time',
+  },
+  {
+    id: 'cooldown-stretch',
+    name: 'Stretching (cool-down)',
+    category: 'mobility',
+    tracking: 'time',
+  },
+  { id: 'push-up', name: 'Push-ups', category: 'push', tracking: 'reps' },
+  {
+    id: 'pull-up-or-row',
+    name: 'Pull-ups or inverted rows',
+    category: 'pull',
+    tracking: 'reps',
+  },
+  { id: 'dip', name: 'Dips', category: 'push', tracking: 'reps' },
+  { id: 'squat', name: 'Squats', category: 'legs', tracking: 'reps' },
+  { id: 'lunge', name: 'Lunges', category: 'legs', tracking: 'reps-per-side' },
+  { id: 'plank', name: 'Plank', category: 'core', tracking: 'time' },
+  {
+    id: 'pike-push-up',
+    name: 'Pike push-ups',
+    category: 'push',
+    tracking: 'reps',
+  },
+  {
+    id: 'plank-to-push-up',
+    name: 'Plank to push-up',
+    category: 'push',
+    tracking: 'reps',
+  },
+  {
+    id: 'glute-bridge',
+    name: 'Glute bridges',
+    category: 'legs',
+    tracking: 'reps',
+  },
+  { id: 'calf-raise', name: 'Calf raises', category: 'legs', tracking: 'reps' },
+  {
+    id: 'hanging-leg-raise',
+    name: 'Hanging leg raises',
+    category: 'core',
+    tracking: 'reps',
+  },
+  {
+    id: 'russian-twist',
+    name: 'Russian twists',
+    category: 'core',
+    tracking: 'reps-per-side',
+  },
+  {
+    id: 'handstand-wall',
+    name: 'Handstand (wall-assisted)',
+    category: 'skill',
+    tracking: 'time',
+  },
+  {
+    id: 'lsit-tuck',
+    name: 'L-sit progressions (tuck sit)',
+    category: 'skill',
+    tracking: 'time',
+  },
+  {
+    id: 'decline-push-up',
+    name: 'Decline push-ups',
+    category: 'push',
+    tracking: 'reps',
+  },
+  {
+    id: 'archer-push-up',
+    name: 'Archer push-ups',
+    category: 'push',
+    tracking: 'reps-per-side',
+  },
+  {
+    id: 'pistol-squat-assisted',
+    name: 'Pistol squats (assisted)',
+    category: 'legs',
+    tracking: 'reps-per-side',
+  },
+  {
+    id: 'bulgarian-split-squat',
+    name: 'Bulgarian split squats',
+    category: 'legs',
+    tracking: 'reps-per-side',
+  },
+  {
+    id: 'single-leg-glute-bridge',
+    name: 'Single-leg glute bridges',
+    category: 'legs',
+    tracking: 'reps-per-side',
+  },
+  {
+    id: 'windshield-wiper',
+    name: 'Windshield wipers',
+    category: 'core',
+    tracking: 'reps-per-side',
+  },
+  {
+    id: 'handstand-free',
+    name: 'Handstand (free-standing)',
+    category: 'skill',
+    tracking: 'time',
+  },
+  {
+    id: 'lsit-hold',
+    name: 'L-sit hold',
+    category: 'skill',
+    tracking: 'time',
+  },
+  {
+    id: 'muscle-up-progression',
+    name: 'Muscle-up progressions',
+    category: 'pull',
+    tracking: 'reps',
+  },
+]
+
+export const EXERCISE_BY_ID: Record<string, ExerciseDef> = Object.fromEntries(
+  EXERCISES.map((e) => [e.id, e]),
+)
