@@ -1,0 +1,11 @@
+# Automatic HTTPS (Let's Encrypt) for calisthenics.betmart.com.br
+# Set CADDY_EMAIL in docker-compose (or .env) for the ACME account / expiry notices.
+
+{
+    email {$CADDY_EMAIL}
+}
+
+calisthenics.betmart.com.br {
+    encode gzip zstd
+    reverse_proxy web:80
+}

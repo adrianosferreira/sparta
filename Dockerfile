@@ -1,7 +1,7 @@
 # Calisthenic — static Vite/React PWA served by nginx
 # Build:  docker build -t calisthenic .
 # Run:    docker run --rm -p 8080:80 calisthenic
-# Compose: docker compose up --build -d
+# Compose (+ Caddy TLS): docker compose up --build -d
 
 FROM node:22-alpine AS build
 
