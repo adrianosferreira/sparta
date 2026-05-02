@@ -1,4 +1,4 @@
-# Calisthenic
+# Calisthenics
 
 **Mobile-first PWA** for tracking a **12-week beginner calisthenics program** (3 months), logging sets and reps on-device, with **XP, levels, streaks, and badges** to stay motivated. Dark UI tuned for people who love training.
 
