@@ -93,11 +93,11 @@ docker run --rm -p 8080:80 sparta
 
 Open **http://localhost:8080** (no TLS).
 
-### Docker Compose (HTTPS for `calisthenics.betmart.com.br`)
+### Docker Compose (HTTPS for `sparta.betmart.com.br`)
 
 1. **Where you have Node:** `npm ci && npm run build` so **`dist/`** exists (or use [`scripts/deploy.sh`](scripts/deploy.sh), which builds on your laptop then rsyncs).
 2. On the server: copy **[`.env.example`](.env.example)** → **`.env`** with **`CADDY_EMAIL`**.
-3. **DNS:** `calisthenics.betmart.com.br` → server IP.
+3. **DNS:** `sparta.betmart.com.br` → server IP.
 4. **Firewall:** **80/tcp**, **443/tcp**, **443/udp**.
 5. On the server:
 
@@ -105,7 +105,7 @@ Open **http://localhost:8080** (no TLS).
 docker compose up --build -d
 ```
 
-Then open **https://calisthenics.betmart.com.br** (first request may take a few seconds while Caddy obtains the certificate).
+Then open **https://sparta.betmart.com.br** (first request may take a few seconds while Caddy obtains the certificate).
 
 Stop:
 
@@ -147,7 +147,7 @@ Requires **Node + npm on the laptop** (not on the droplet). Defaults: **206.189.
 - Build **`dist/`** on CI or locally, then **`docker build`** with that tree in context (or push a pre-built image from CI).
 - If the app is hosted under a **subpath**, set Vite [`base`](https://vitejs.dev/config/shared-options.html#base) and rebuild before baking the image.
 
-### Betmart production — `calisthenics.betmart.com.br`
+### Betmart production — `sparta.betmart.com.br`
 
 This build is intended to live at **`https://calisthenics.betmart.com.br`** and **not appear in Google Search**.
 
