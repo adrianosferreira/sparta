@@ -6,8 +6,11 @@ import { useTranslation } from '@/i18n/useTranslation'
 import { BADGE_RULES } from '@/lib/gamification'
 import { computeBmi, isProfileCompleteForKcal } from '@/lib/kcal'
 import type { BiologicalSex, BodyProfile } from '@/types'
+import { apiGetTraining } from '@/lib/api'
+import { PAYPAL_DONATE_URL } from '@/lib/paypalDonateUrl'
 import { useAppStore } from '@/store/useAppStore'
-import { Download, Trash2 } from 'lucide-react'
+import { useAuthStore } from '@/store/useAuthStore'
+import { Coffee, Download, LogOut, Trash2 } from 'lucide-react'
 import clsx from 'clsx'
 import { useEffect, useState } from 'react'
 
@@ -29,6 +32,18 @@ export function ProfilePage() {
   const sessions = useAppStore((s) => s.sessions)
   const resetProgress = useAppStore((s) => s.resetProgress)
   const setBodyProfile = useAppStore((s) => s.setBodyProfile)
+  const hydrateFromServer = useAppStore((s) => s.hydrateFromServer)
+
+  const token = useAuthStore((s) => s.token)
+  const authEmailSaved = useAuthStore((s) => s.email)
+  const login = useAuthStore((s) => s.login)
+  const register = useAuthStore((s) => s.register)
+  const clearSession = useAuthStore((s) => s.clearSession)
+
+  const [authEmail, setAuthEmail] = useState('')
+  const [authPassword, setAuthPassword] = useState('')
+  const [authBusy, setAuthBusy] = useState(false)
+  const [authError, setAuthError] = useState<string | null>(null)
 
   const bp = user.bodyProfile
   const [age, setAge] = useState('')
@@ -126,9 +141,116 @@ export function ProfilePage() {
 
   const kcalReady = isProfileCompleteForKcal(bp)
 
+  const pullServerAfterAuth = async () => {
+    const data = await apiGetTraining()
+    hydrateFromServer(data)
+  }
+
+  const onLogin = async () => {
+    setAuthError(null)
+    setAuthBusy(true)
+    try {
+      await login(authEmail.trim(), authPassword)
+      setAuthPassword('')
+      await pullServerAfterAuth()
+    } catch (e) {
+      setAuthError(e instanceof Error ? e.message : 'Error')
+    } finally {
+      setAuthBusy(false)
+    }
+  }
+
+  const onRegister = async () => {
+    setAuthError(null)
+    setAuthBusy(true)
+    try {
+      await register(authEmail.trim(), authPassword)
+      setAuthPassword('')
+      await pullServerAfterAuth()
+    } catch (e) {
+      setAuthError(e instanceof Error ? e.message : 'Error')
+    } finally {
+      setAuthBusy(false)
+    }
+  }
+
+  const onLogout = () => {
+    clearSession()
+    setAuthError(null)
+  }
+
   return (
     <div className="space-y-6 px-4 pb-28 pt-6">
       <SectionHeader title={t('profile.title')} subtitle={t('profile.subtitle')} />
+
+      <div className="rounded-2xl border border-surface-border bg-surface p-5">
+        <h3 className="text-sm font-bold text-white">{t('profile.accountTitle')}</h3>
+        <p className="mt-1 text-xs text-zinc-500">{t('profile.accountSubtitle')}</p>
+        {token ? (
+          <div className="mt-4 space-y-3">
+            <p className="text-sm text-zinc-300">
+              <span className="font-bold text-accent">{authEmailSaved || authEmail}</span>
+            </p>
+            <p className="text-xs text-zinc-600">{t('profile.accountSynced')}</p>
+            <button
+              type="button"
+              onClick={onLogout}
+              className="flex w-full items-center justify-center gap-2 rounded-xl border border-surface-border py-3 text-sm font-bold text-zinc-300 hover:text-white"
+            >
+              <LogOut className="h-4 w-4" />
+              {t('profile.logout')}
+            </button>
+          </div>
+        ) : (
+          <div className="mt-4 space-y-3">
+            <label className="block">
+              <span className="mb-1 block text-xs font-bold text-zinc-500">
+                {t('profile.accountEmail')}
+              </span>
+              <input
+                type="email"
+                autoComplete="email"
+                value={authEmail}
+                onChange={(e) => setAuthEmail(e.target.value)}
+                className="w-full rounded-xl border border-surface-border bg-surface-elevated px-3 py-2.5 text-sm font-semibold text-white"
+              />
+            </label>
+            <label className="block">
+              <span className="mb-1 block text-xs font-bold text-zinc-500">
+                {t('profile.accountPassword')}
+              </span>
+              <input
+                type="password"
+                autoComplete="current-password"
+                value={authPassword}
+                onChange={(e) => setAuthPassword(e.target.value)}
+                className="w-full rounded-xl border border-surface-border bg-surface-elevated px-3 py-2.5 text-sm font-semibold text-white"
+              />
+            </label>
+            {authError ? (
+              <p className="text-xs font-semibold text-red-400">{authError}</p>
+            ) : null}
+            <div className="flex gap-2">
+              <button
+                type="button"
+                disabled={authBusy}
+                onClick={() => void onLogin()}
+                className="flex-1 rounded-xl bg-accent py-3 text-sm font-black text-black disabled:opacity-50"
+              >
+                {t('profile.login')}
+              </button>
+              <button
+                type="button"
+                disabled={authBusy}
+                onClick={() => void onRegister()}
+                className="flex-1 rounded-xl border border-surface-border py-3 text-sm font-bold text-white disabled:opacity-50"
+              >
+                {t('profile.register')}
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
 
       <div>
         <p className="mb-2 text-xs font-bold uppercase tracking-wide text-zinc-500">
@@ -285,6 +407,15 @@ export function ProfilePage() {
           <Trash2 className="h-4 w-4" />
           {t('profile.reset')}
         </button>
+        <a
+          href={PAYPAL_DONATE_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center justify-center gap-2 rounded-2xl border border-amber-500/35 bg-amber-500/10 py-4 text-sm font-bold text-amber-200/90 transition-colors hover:border-amber-400/50 hover:bg-amber-500/15 active:scale-[0.99]"
+        >
+          <Coffee className="h-4 w-4 shrink-0" />
+          {t('profile.buyCoffee')}
+        </a>
       </div>
     </div>
   )

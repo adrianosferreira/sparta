@@ -3,6 +3,19 @@ export const en: Record<string, string> = {
   'nav.program': 'Program',
   'nav.progress': 'Progress',
   'nav.profile': 'Profile',
+  'nav.about': 'About',
+
+  'about.back': 'Back to profile',
+  'about.title': 'About',
+  'about.subtitle': 'Why Sparta exists',
+  'about.p1':
+    'I love calisthenics — bodyweight training keeps me consistent and it is how I like to move.',
+  'about.p2':
+    'I built this app for myself in a weekend: a simple way to follow a program, log sets, and keep streaks without fuss.',
+  'about.p3':
+    'If you want to support the work, you are welcome to use Buy me a coffee on PayPal from Profile or below. Totally optional.',
+  'about.free':
+    'The app is completely free: no paywalls, no subscriptions, and no ads.',
 
   'today.brand': 'Sparta',
   'today.heroTitle': 'Train like you mean it',
@@ -104,10 +117,20 @@ export const en: Record<string, string> = {
 
   'profile.title': 'Profile',
   'profile.subtitle': 'Level, badges, and your data',
+  'profile.accountTitle': 'Account & cloud sync',
+  'profile.accountSubtitle':
+    'Register or sign in to save progress in SQLite on the Sparta API (optional — this device still works offline as a guest).',
+  'profile.accountEmail': 'Email',
+  'profile.accountPassword': 'Password (min. 8 characters)',
+  'profile.login': 'Sign in',
+  'profile.register': 'Create account',
+  'profile.logout': 'Sign out',
+  'profile.accountSynced': 'Workouts sync to your account automatically when you are online.',
   'profile.levelLine': 'Level {{n}}',
   'profile.totalXp': '{{xp}} total XP',
   'profile.badges': 'Badges',
   'profile.export': 'Export backup (JSON)',
+  'profile.buyCoffee': 'Buy me a coffee (PayPal)',
   'profile.reset': 'Reset all progress',
   'profile.resetConfirm':
     'Erase all progress, sessions, and badges on this device? This cannot be undone.',

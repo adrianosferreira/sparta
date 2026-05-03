@@ -3,6 +3,19 @@ export const ptBR: Record<string, string> = {
   'nav.program': 'Programa',
   'nav.progress': 'Progresso',
   'nav.profile': 'Perfil',
+  'nav.about': 'Sobre',
+
+  'about.back': 'Voltar ao perfil',
+  'about.title': 'Sobre',
+  'about.subtitle': 'Por que o Sparta existe',
+  'about.p1':
+    'Eu amo calistenia — treino com o peso do corpo me mantém consistente e é como prefiro me movimentar.',
+  'about.p2':
+    'Fiz este app para mim em um fim de semana: um jeito simples de seguir um programa, registrar séries e manter a sequência sem complicação.',
+  'about.p3':
+    'Se quiser apoiar o projeto, fique à vontade para usar o “Me pague um café” no PayPal, no perfil ou abaixo. Zero obrigação.',
+  'about.free':
+    'O app é totalmente grátis: sem paywall, sem assinatura e sem anúncios.',
 
   'today.brand': 'Sparta',
   'today.heroTitle': 'Treine de verdade',
@@ -106,10 +119,21 @@ export const ptBR: Record<string, string> = {
 
   'profile.title': 'Perfil',
   'profile.subtitle': 'Nível, medalhas e seus dados',
+  'profile.accountTitle': 'Conta e nuvem',
+  'profile.accountSubtitle':
+    'Crie uma conta ou entre para salvar o progresso no SQLite da API Sparta (opcional — convidado offline continua neste aparelho).',
+  'profile.accountEmail': 'E-mail',
+  'profile.accountPassword': 'Senha (mín. 8 caracteres)',
+  'profile.login': 'Entrar',
+  'profile.register': 'Criar conta',
+  'profile.logout': 'Sair',
+  'profile.accountSynced':
+    'Os treinos sincronizam com sua conta automaticamente quando estiver online.',
   'profile.levelLine': 'Nível {{n}}',
   'profile.totalXp': '{{xp}} XP no total',
   'profile.badges': 'Medalhas',
   'profile.export': 'Exportar backup (JSON)',
+  'profile.buyCoffee': 'Me pague um café (PayPal)',
   'profile.reset': 'Apagar todo o progresso',
   'profile.resetConfirm':
     'Apagar todo o progresso, sessões e medalhas neste aparelho? Não dá para desfazer.',

@@ -5,7 +5,12 @@
     email {$CADDY_EMAIL}
 }
 
-calisthenics.betmart.com.br {
+sparta.betmart.com.br {
     encode gzip zstd
-    reverse_proxy web:80
+    handle /api* {
+        reverse_proxy api:4000
+    }
+    handle {
+        reverse_proxy web:80
+    }
 }

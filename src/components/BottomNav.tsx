@@ -1,12 +1,13 @@
 import clsx from 'clsx'
 import { useTranslation } from '@/i18n/useTranslation'
-import { CalendarDays, Dumbbell, LineChart, User } from 'lucide-react'
+import { CalendarDays, Dumbbell, Info, LineChart, User } from 'lucide-react'
 import { NavLink } from 'react-router-dom'
 
 const links = [
   { to: '/', labelKey: 'nav.today', icon: Dumbbell },
   { to: '/program', labelKey: 'nav.program', icon: CalendarDays },
   { to: '/progress', labelKey: 'nav.progress', icon: LineChart },
+  { to: '/about', labelKey: 'nav.about', icon: Info },
   { to: '/profile', labelKey: 'nav.profile', icon: User },
 ] as const
 
@@ -22,7 +23,7 @@ export function BottomNav() {
             end={to === '/'}
             className={({ isActive }) =>
               clsx(
-                'flex min-h-[48px] min-w-[56px] flex-1 flex-col items-center justify-center gap-0.5 rounded-xl text-[10px] font-semibold uppercase tracking-wide transition-colors',
+                'flex min-h-[48px] min-w-0 flex-1 flex-col items-center justify-center gap-0.5 rounded-xl px-0.5 text-[10px] font-semibold uppercase tracking-wide transition-colors',
                 isActive ? 'text-accent' : 'text-zinc-500 hover:text-zinc-300',
               )
             }

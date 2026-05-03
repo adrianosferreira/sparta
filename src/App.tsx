@@ -1,4 +1,5 @@
 import { ShellLayout } from '@/layouts/ShellLayout'
+import { AboutPage } from '@/pages/AboutPage'
 import { ProgramPage } from '@/pages/ProgramPage'
 import { ProfilePage } from '@/pages/ProfilePage'
 import { ProgressPage } from '@/pages/ProgressPage'
@@ -14,6 +15,7 @@ export default function App() {
         <Route path="/program" element={<ProgramPage />} />
         <Route path="/progress" element={<ProgressPage />} />
         <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/about" element={<AboutPage />} />
       </Route>
       <Route path="/workout" element={<WorkoutSessionPage />} />
     </Routes>

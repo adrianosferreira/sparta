@@ -8,6 +8,21 @@ services:
       - "80"
     restart: unless-stopped
 
+  api:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    image: sparta-api:latest
+    expose:
+      - "4000"
+    environment:
+      PORT: "4000"
+      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in .env (see .env.example)}
+      CORS_ORIGINS: ${CORS_ORIGINS:-}
+    volumes:
+      - api_data:/app/data
+    restart: unless-stopped
+
   caddy:
     image: caddy:2-alpine
     ports:
@@ -22,8 +37,10 @@ services:
       - caddy_config:/config
     depends_on:
       - web
+      - api
     restart: unless-stopped
 
 volumes:
   caddy_data:
   caddy_config:
+  api_data:

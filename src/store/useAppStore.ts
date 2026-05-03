@@ -7,6 +7,7 @@ import {
   nextStreak,
   todayLocal,
 } from '@/lib/gamification'
+import type { TrainingPayload } from '@/lib/api'
 import type { AppLocale } from '@/i18n/types'
 import { DEFAULT_LOCALE } from '@/i18n/types'
 import {
@@ -119,6 +120,7 @@ interface AppStore {
   setBodyProfile: (profile: BodyProfile | null) => void
   setSchedule: (week: number, dayIndex: number) => void
   abandonActiveSession: () => void
+  hydrateFromServer: (data: TrainingPayload) => void
 }
 
 export const useAppStore = create<AppStore>()(
@@ -257,6 +259,22 @@ export const useAppStore = create<AppStore>()(
       },
 
       abandonActiveSession: () => set({ activeSession: null }),
+
+      hydrateFromServer: (data: TrainingPayload) =>
+        set({
+          user: {
+            ...initialUser(),
+            ...data.user,
+            bodyProfile: data.user.bodyProfile ?? null,
+          },
+          sessions: Array.isArray(data.sessions) ? data.sessions : [],
+          locale:
+            data.locale === 'pt-BR' || data.locale === 'en'
+              ? data.locale
+              : DEFAULT_LOCALE,
+          activeSession: null,
+          pendingBadgeIds: [],
+        }),
     }),
     {
       name: STORAGE_KEY,

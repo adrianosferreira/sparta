@@ -8,7 +8,9 @@
     "build": "tsc --noEmit && vite build",
     "build:types": "tsc --noEmit",
     "build:vite": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "server": "npm run start --prefix server",
+    "server:dev": "npm run dev --prefix server"
   },
   "dependencies": {
     "clsx": "^2.1.1",

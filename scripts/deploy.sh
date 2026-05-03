@@ -13,7 +13,7 @@
 #   DEPLOY_PATH    default /opt/calisthenics
 #   DEPLOY_SSH_KEY path to private key (e.g. ~/.ssh/id_ed25519)
 #
-# On the server: create .env with CADDY_EMAIL=... (see .env.example). .env is not rsync'd.
+# On the server: create .env with CADDY_EMAIL and JWT_SECRET (see .env.example). .env is not rsync'd.
 #
 set -euo pipefail
 
@@ -68,4 +68,4 @@ echo "==> Remote: mkdir + docker compose up --build -d"
    cd '${REMOTE_DIR}'
    docker-compose up --build -d"
 
-echo "==> Done. https://calisthenics.betmart.com.br (DNS → ${HOST}, ports 80/443)"
+echo "==> Done. https://sparta.betmart.com.br (DNS → ${HOST}, ports 80/443; /api → api container)"
