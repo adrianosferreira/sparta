@@ -10,7 +10,7 @@
 # Optional env:
 #   DEPLOY_HOST    default 206.189.193.239
 #   DEPLOY_USER    default root
-#   DEPLOY_PATH    default /opt/calisthenics
+#   DEPLOY_PATH    default /opt/sparta
 #   DEPLOY_SSH_KEY path to private key (e.g. ~/.ssh/id_ed25519)
 #
 # On the server: create .env with CADDY_EMAIL and JWT_SECRET (see .env.example). .env is not rsync'd.
@@ -23,7 +23,7 @@ cd "$REPO_ROOT"
 HOST="${DEPLOY_HOST:-206.189.193.239}"
 USER="${DEPLOY_USER:-root}"
 REMOTE="${USER}@${HOST}"
-REMOTE_DIR="${DEPLOY_PATH:-/opt/calisthenics}"
+REMOTE_DIR="${DEPLOY_PATH:-/opt/sparta}"
 
 if ! command -v npm >/dev/null 2>&1; then
   echo "error: npm not found. Install Node.js on this machine, then run again." >&2
@@ -61,11 +61,12 @@ rsync -avz --delete \
   --exclude '*.log' \
   ./ "${REMOTE}:${REMOTE_DIR}/"
 
-echo "==> Remote: mkdir + docker compose up --build -d"
+echo "==> Remote: mkdir + docker-compose down + up --build -d"
 "${SSH_CMD[@]}" "$REMOTE" \
   "set -euo pipefail
    mkdir -p '${REMOTE_DIR}'
    cd '${REMOTE_DIR}'
+   docker-compose down --remove-orphans
    docker-compose up --build -d"
 
 echo "==> Done. https://sparta.betmart.com.br (DNS → ${HOST}, ports 80/443; /api → api container)"

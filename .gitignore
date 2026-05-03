@@ -8,3 +8,6 @@ server/data/*.db
 server/data/*.db-shm
 server/data/*.db-wal
 server/.env
+
+# Production DB copy (scripts/fetch-production-db.sh)
+data/production-sparta.db
