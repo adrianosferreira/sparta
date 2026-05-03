@@ -205,6 +205,6 @@ docker-compose.yml
 
 ---
 
-## License
+## Buy me a coffee
 
-Specify your license here (e.g. MIT) once you choose one.
+If Sparta helps your training and you want to say thanks, you can **[support on PayPal](https://www.paypal.com/donate/?business=adrianokta%40gmail.com)** — totally optional. The app stays free.
