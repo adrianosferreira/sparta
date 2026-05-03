@@ -14,6 +14,10 @@ export interface ExerciseDef {
   name: string
   category: ExerciseCategory
   tracking: Tracking
+  /** Rest after logging another set of this exercise (seconds). Falls back to category default. */
+  restBetweenSetsSec?: number
+  /** Rest after logging this exercise when the previous set was a different exercise (seconds). */
+  restAfterExerciseSec?: number
 }
 
 export type PrescriptionNoteKey =
@@ -54,11 +58,23 @@ export interface Program {
   weeks: ProgramWeek[]
 }
 
+export type BiologicalSex = 'male' | 'female' | 'unspecified'
+
+/** Saved on the user for BMI display and MET-based kcal (uses body weight). */
+export interface BodyProfile {
+  ageYears: number
+  sex: BiologicalSex
+  heightCm: number
+  weightKg: number
+}
+
 export interface LoggedSet {
   setNumber: number
   reps?: number
   durationSec?: number
   perSide?: { left: number; right: number }
+  /** Estimated kcal for this set (MET × weight × time), if profile had weight when logged. */
+  kcal?: number
   completedAt: string
 }
 
@@ -75,6 +91,8 @@ export interface WorkoutSession {
   completedAt?: string
   logs: ExerciseLog[]
   xpEarned: number
+  /** Sum of `LoggedSet.kcal` for this session, if any set had estimates. */
+  kcalTotal?: number
 }
 
 export interface UserState {
@@ -85,4 +103,6 @@ export interface UserState {
   unlockedBadges: string[]
   currentWeek: number
   currentDayIndex: number
+  /** Age, sex, height, weight — used for BMI and kcal estimates (weight drives MET formula). */
+  bodyProfile: BodyProfile | null
 }

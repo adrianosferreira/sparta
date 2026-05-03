@@ -1,3 +1,4 @@
+import { EXERCISE_BY_ID } from '@/data/exercises'
 import { getDay, getWeek, PROGRAM } from '@/data/program'
 import {
   computeSessionXp,
@@ -8,11 +9,56 @@ import {
 } from '@/lib/gamification'
 import type { AppLocale } from '@/i18n/types'
 import { DEFAULT_LOCALE } from '@/i18n/types'
-import type { ExerciseLog, LoggedSet, UserState, WorkoutSession } from '@/types'
+import {
+  estimateSetKcal,
+  isProfileCompleteForKcal,
+  sessionKcalTotal,
+} from '@/lib/kcal'
+import type {
+  BodyProfile,
+  ExerciseLog,
+  LoggedSet,
+  UserState,
+  WorkoutSession,
+} from '@/types'
 import { create } from 'zustand'
-import { createJSONStorage, persist } from 'zustand/middleware'
+import { createJSONStorage, persist, type StateStorage } from 'zustand/middleware'
 
-const STORAGE_KEY = 'calisthenic:v1'
+const STORAGE_KEY = 'sparta:v1'
+const LEGACY_STORAGE_KEY = 'calisthenic:v1'
+
+/** Reads legacy `calisthenic:v1` once and copies into `sparta:v1` so renames do not lose data. */
+function createSpartaPersistStorage(): StateStorage {
+  return {
+    getItem: (name) => {
+      if (typeof localStorage === 'undefined') return null
+      const v = localStorage.getItem(name)
+      if (v != null) return v
+      if (name === STORAGE_KEY) {
+        const legacy = localStorage.getItem(LEGACY_STORAGE_KEY)
+        if (legacy != null) {
+          try {
+            localStorage.setItem(STORAGE_KEY, legacy)
+            localStorage.removeItem(LEGACY_STORAGE_KEY)
+          } catch {
+            /* ignore quota / private mode */
+          }
+          return legacy
+        }
+      }
+      return null
+    },
+    setItem: (name, value) => {
+      if (typeof localStorage === 'undefined') return
+      localStorage.setItem(name, value)
+    },
+    removeItem: (name) => {
+      if (typeof localStorage === 'undefined') return
+      localStorage.removeItem(name)
+      if (name === STORAGE_KEY) localStorage.removeItem(LEGACY_STORAGE_KEY)
+    },
+  }
+}
 
 function initialUser(): UserState {
   return {
@@ -22,6 +68,7 @@ function initialUser(): UserState {
     unlockedBadges: [],
     currentWeek: 1,
     currentDayIndex: 0,
+    bodyProfile: null,
   }
 }
 
@@ -69,6 +116,7 @@ interface AppStore {
   completeSession: () => string[]
   dismissBadgeToast: () => void
   resetProgress: () => void
+  setBodyProfile: (profile: BodyProfile | null) => void
   setSchedule: (week: number, dayIndex: number) => void
   abandonActiveSession: () => void
 }
@@ -101,6 +149,13 @@ export const useAppStore = create<AppStore>()(
       logSet: (exerciseId, data) => {
         const s = get().activeSession
         if (!s) return
+        const profile = get().user.bodyProfile
+        const ex = EXERCISE_BY_ID[exerciseId]
+        const kcal =
+          ex &&
+          isProfileCompleteForKcal(profile)
+            ? estimateSetKcal(profile.weightKg, ex, data)
+            : undefined
         const logs = s.logs.map((log) => {
           if (log.exerciseId !== exerciseId) return log
           const setNumber = log.sets.length + 1
@@ -110,6 +165,7 @@ export const useAppStore = create<AppStore>()(
             durationSec: data.durationSec,
             perSide: data.perSide,
             completedAt: new Date().toISOString(),
+            ...(kcal != null && kcal > 0 ? { kcal } : {}),
           }
           return { ...log, sets: [...log.sets, next] }
         })
@@ -135,6 +191,7 @@ export const useAppStore = create<AppStore>()(
           ...s,
           completedAt,
           xpEarned: computeSessionXp({ ...s, completedAt }),
+          kcalTotal: sessionKcalTotal(s.logs),
         }
         const xpEarned = finished.xpEarned
         const sessions = [...get().sessions, finished]
@@ -175,11 +232,16 @@ export const useAppStore = create<AppStore>()(
 
       resetProgress: () =>
         set((s) => ({
-          user: initialUser(),
+          user: { ...initialUser(), bodyProfile: s.user.bodyProfile },
           sessions: [],
           activeSession: null,
           pendingBadgeIds: [],
           locale: s.locale,
+        })),
+
+      setBodyProfile: (profile) =>
+        set((state) => ({
+          user: { ...state.user, bodyProfile: profile },
         })),
 
       setSchedule: (week, dayIndex) => {
@@ -198,18 +260,32 @@ export const useAppStore = create<AppStore>()(
     }),
     {
       name: STORAGE_KEY,
-      storage: createJSONStorage(() => localStorage),
+      storage: createJSONStorage(() => createSpartaPersistStorage()),
       partialize: (s) => ({
         user: s.user,
         sessions: s.sessions,
         locale: s.locale,
       }),
-      merge: (persisted, current) => ({
-        ...current,
-        ...(persisted as object),
-        locale:
-          (persisted as { locale?: AppLocale }).locale ?? current.locale,
-      }),
+      merge: (persisted, current) => {
+        const p = persisted as {
+          user?: Partial<UserState>
+          sessions?: WorkoutSession[]
+          locale?: AppLocale
+        }
+        return {
+          ...current,
+          ...p,
+          locale: p.locale ?? current.locale,
+          sessions: p.sessions ?? current.sessions,
+          user: {
+            ...initialUser(),
+            ...current.user,
+            ...(p.user ?? {}),
+            bodyProfile:
+              p.user?.bodyProfile ?? current.user.bodyProfile ?? null,
+          },
+        }
+      },
     },
   ),
 )

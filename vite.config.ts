@@ -4,15 +4,20 @@ import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig({
+  build: {
+    rollupOptions: {
+      maxParallelFileOps: 4,
+    },
+  },
   plugins: [
     react(),
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'icons/*.png'],
       manifest: {
-        name: 'Calisthenic',
-        short_name: 'Calisthenic',
-        description: 'Track calisthenics progress and your 3-month training plan',
+        name: 'Sparta',
+        short_name: 'Sparta',
+        description: 'Track your calisthenics training plan, XP, and progress',
         theme_color: '#0a0a0a',
         background_color: '#0a0a0a',
         display: 'standalone',

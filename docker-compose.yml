@@ -3,7 +3,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: calisthenic:latest
+    image: sparta:latest
     expose:
       - "80"
     restart: unless-stopped

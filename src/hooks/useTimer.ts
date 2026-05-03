@@ -1,9 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-export function useTimer(initialSeconds: number) {
+export function useTimer(
+  initialSeconds: number,
+  onFinish?: () => void,
+) {
   const [remaining, setRemaining] = useState(initialSeconds)
   const [running, setRunning] = useState(false)
   const tickRef = useRef<number | null>(null)
+  const onFinishRef = useRef(onFinish)
+  onFinishRef.current = onFinish
 
   const reset = useCallback((sec?: number) => {
     setRemaining(sec ?? initialSeconds)
@@ -20,6 +25,10 @@ export function useTimer(initialSeconds: number) {
       setRemaining((r) => {
         if (r <= 1) {
           setRunning(false)
+          if (r === 1) {
+            // Defer so callers can setState (e.g. close a modal) outside this updater.
+            queueMicrotask(() => onFinishRef.current?.())
+          }
           return 0
         }
         return r - 1

@@ -1,6 +1,6 @@
-# Calisthenics
+# Sparta
 
-**Mobile-first PWA** for tracking a **12-week beginner calisthenics program** (3 months), logging sets and reps on-device, with **XP, levels, streaks, and badges** to stay motivated. Dark UI tuned for people who love training.
+**Sparta** is a **mobile-first PWA** for tracking a **12-week beginner calisthenics program** (3 months), logging sets and reps on-device, with **XP, levels, streaks, and badges** to stay motivated. Dark UI tuned for people who love training.
 
 ![Stack](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)
@@ -28,13 +28,13 @@
 | Routing      | React Router 6                             |
 | State        | Zustand + `persist` → `localStorage`        |
 | Charts       | Recharts                                    |
-| Production   | Static **nginx** image + **Caddy** (TLS / Let’s Encrypt) in Compose |
+| Production   | **`npm run build` on your machine** → static **nginx** image + **Caddy** (TLS) in Compose |
 
 ---
 
 ## Prerequisites
 
-- **Node.js** 18+ (20+ or 22 recommended for tooling parity with Docker build)
+- **Node.js** 18+ (20+ or 22 recommended)
 - **npm** 9+
 
 ---
@@ -42,8 +42,8 @@
 ## Local development
 
 ```bash
-git clone <your-repo-url> calisthenic
-cd calisthenic
+git clone <your-repo-url> sparta
+cd sparta
 npm install
 npm run dev
 ```
@@ -72,28 +72,30 @@ Output is in **`dist/`**. Serve it with any static file server; the app uses the
 
 ## Docker deployment
 
-The **`web`** image is **multi-stage**: Node builds the app, then **nginx:alpine** serves static files (SPA routing, cache headers, PWA).
+**The droplet never runs Node or Vite.** The **`web`** image is **nginx only**: it copies a pre-built **`dist/`** (SPA routing, cache headers, PWA assets already compiled).
 
-**Docker Compose** adds **`caddy`** in front: it terminates **HTTPS** on **443** (and **80** for redirects / ACME), obtains **Let’s Encrypt** certificates automatically, and reverse-proxies to `web:80`. Certificates persist in the **`caddy_data`** volume.
+**Why:** a **512 MiB** VPS often cannot finish **`vite build`** without the OOM killer (**SIGKILL**). **Build where you have RAM** (laptop, CI), then ship **`dist/`** to the server.
 
-### Quick HTTP-only test (single container)
+**Docker Compose** runs **`caddy`** in front: **HTTPS** / **Let’s Encrypt**, proxy to `web:80`, certs in **`caddy_data`**.
+
+### Build locally, then Docker (manual)
 
 ```bash
-docker build -t calisthenic .
-docker run --rm -p 8080:80 calisthenic
+npm ci
+npm run build
+docker build -t sparta .
+docker run --rm -p 8080:80 sparta
 ```
 
 Open **http://localhost:8080** (no TLS).
 
 ### Docker Compose (HTTPS for `calisthenics.betmart.com.br`)
 
-1. On the server, copy **[`.env.example`](.env.example)** to **`.env`** and set **`CADDY_EMAIL`** to a mailbox you read (Let’s Encrypt uses it for expiry / account notices).
-
-2. **DNS:** `calisthenics.betmart.com.br` → this server’s public IP.
-
-3. **Firewall:** allow **80/tcp**, **443/tcp**, and **443/udp** (HTTP/3).
-
-4. Start:
+1. **Where you have Node:** `npm ci && npm run build` so **`dist/`** exists (or use [`scripts/deploy.sh`](scripts/deploy.sh), which builds on your laptop then rsyncs).
+2. On the server: copy **[`.env.example`](.env.example)** → **`.env`** with **`CADDY_EMAIL`**.
+3. **DNS:** `calisthenics.betmart.com.br` → server IP.
+4. **Firewall:** **80/tcp**, **443/tcp**, **443/udp**.
+5. On the server:
 
 ```bash
 docker compose up --build -d
@@ -107,26 +109,38 @@ Stop:
 docker compose down
 ```
 
-Override the ACME email without editing compose:
+Override the ACME email:
 
 ```bash
 CADDY_EMAIL=you@betmart.com.br docker compose up --build -d
 ```
 
-### One-command deploy (rsync + compose on server)
+### 512 MiB droplets
 
-From your laptop (SSH key access to the host):
+The server **`docker build`** only copies static files into nginx — **no Vite**. Optional **swap** still helps the OS + Docker:
+
+```bash
+sudo fallocate -l 2G /swapfile
+sudo chmod 600 /swapfile
+sudo mkswap /swapfile
+sudo swapon /swapfile
+echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
+```
+
+### One-command deploy (build laptop → rsync → compose)
+
+[`scripts/deploy.sh`](scripts/deploy.sh) runs **`npm ci`** (if needed) and **`npm run build`** on **your machine**, rsyncs the repo **including `dist/`** to the server, then **`docker compose up --build -d`** over SSH.
 
 ```bash
 chmod +x scripts/deploy.sh   # once
 ./scripts/deploy.sh
 ```
 
-Defaults: **206.189.193.239**, user **root**, path **`/opt/calisthenics`**. Override with `DEPLOY_HOST`, `DEPLOY_USER`, `DEPLOY_PATH`, `DEPLOY_SSH_KEY` (see header in [`scripts/deploy.sh`](scripts/deploy.sh)).
+Requires **Node + npm on the laptop** (not on the droplet). Defaults: **206.189.193.239**, **root**, **`/opt/calisthenics`**. Env: `DEPLOY_HOST`, `DEPLOY_USER`, `DEPLOY_PATH`, `DEPLOY_SSH_KEY`.
 
 ### Deploying elsewhere
 
-- Push the image to your registry, or build on the host from this repo.
+- Build **`dist/`** on CI or locally, then **`docker build`** with that tree in context (or push a pre-built image from CI).
 - If the app is hosted under a **subpath**, set Vite [`base`](https://vitejs.dev/config/shared-options.html#base) and rebuild before baking the image.
 
 ### Betmart production — `calisthenics.betmart.com.br`
@@ -144,7 +158,7 @@ This build is intended to live at **`https://calisthenics.betmart.com.br`** and 
 
 1. **DNS** — `calisthenics.betmart.com.br` → server public IP (same host that runs Docker).
 2. **`.env`** — set `CADDY_EMAIL` (see [`.env.example`](.env.example)); keep `.env` only on the server (not committed).
-3. **`docker compose up --build -d`** — Caddy listens on **80/443**; do not put another service on those ports on the same machine.
+3. **Deploy** — from a machine with Node, run [`scripts/deploy.sh`](scripts/deploy.sh) (build + rsync + compose), or ensure **`dist/`** exists on the server and run **`docker compose up --build -d`**. Caddy listens on **80/443**; do not put another service on those ports on the same machine.
 4. If something else already owns **80/443**, either free those ports or run this stack on another host / use an external proxy that forwards to a published `web` port (advanced).
 
 **If URLs were ever indexed by mistake**, use [Google Search Console](https://search.google.com/search-console) URL removal and keep `noindex` in place until Google drops them.
@@ -153,7 +167,7 @@ This build is intended to live at **`https://calisthenics.betmart.com.br`** and 
 
 ## Data & privacy
 
-- **No backend** in this version: workouts, XP, badges, and language live in **`localStorage`** (key `calisthenic:v1`).
+- **No backend** in this version: workouts, XP, badges, and language live in **`localStorage`** (key **`sparta:v1`**; older installs are migrated once from `calisthenic:v1`).
 - **Profile → Export backup (JSON)** downloads your data; **Reset all progress** clears it on this device.
 - Clearing site data in the browser removes progress.
 
@@ -180,7 +194,7 @@ src/
 deploy/
   nginx.conf      # Inside the `web` image
   Caddyfile       # TLS + reverse proxy in Compose
-Dockerfile
+Dockerfile        # nginx + COPY dist/ (build dist locally first)
 docker-compose.yml
 .env.example      # CADDY_EMAIL for Let’s Encrypt
 ```

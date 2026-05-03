@@ -2,6 +2,7 @@ import { SectionHeader } from '@/components/SectionHeader'
 import { EXERCISES } from '@/data/exercises'
 import { allProgramExerciseIds } from '@/data/program'
 import { useTranslation } from '@/i18n/useTranslation'
+import { totalKcalFromSessions } from '@/lib/kcal'
 import {
   chartPointsForExercise,
   sumMetricForExercise,
@@ -51,6 +52,8 @@ export function ProgressPage() {
     }
     return [...dates].sort().reverse()
   }, [completed])
+
+  const totalKcal = useMemo(() => totalKcalFromSessions(sessions), [sessions])
 
   const yLabel =
     ex?.tracking === 'time'
@@ -141,6 +144,15 @@ export function ProgressPage() {
               </>
             )}
           </p>
+        </div>
+        <div className="col-span-2 rounded-2xl border border-surface-border bg-surface-elevated p-4">
+          <p className="text-xs font-bold uppercase text-zinc-500">
+            {t('progress.totalKcal')}
+          </p>
+          <p className="mt-2 text-2xl font-black text-accent">
+            {totalKcal > 0 ? t('progress.totalKcalValue', { kcal: totalKcal }) : '—'}
+          </p>
+          <p className="mt-1 text-xs text-zinc-600">{t('progress.totalKcalHint')}</p>
         </div>
       </div>
 

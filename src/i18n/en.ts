@@ -4,7 +4,7 @@ export const en: Record<string, string> = {
   'nav.progress': 'Progress',
   'nav.profile': 'Profile',
 
-  'today.brand': 'Calisthenic',
+  'today.brand': 'Sparta',
   'today.heroTitle': 'Train like you mean it',
   'today.heroBody':
     'Your 3-month beginner plan, progress saved on this device, XP and badges for every session you finish.',
@@ -16,6 +16,8 @@ export const en: Record<string, string> = {
   'today.startWorkout': 'Start workout',
   'today.resumeWorkout': 'Resume workout',
   'today.browseProgram': 'Browse program',
+  'today.kcalProfileHint': 'Add your weight in Profile to estimate calories (MET-based).',
+  'today.kcalProfileLink': 'Open Profile',
 
   'streak.days': '{{n}}-day streak',
 
@@ -34,12 +36,33 @@ export const en: Record<string, string> = {
     'You will earn about {{xp}} XP from logged sets plus the session bonus. You can always log more sets later by starting a new session for the same day.',
   'workout.keepTraining': 'Keep training',
   'workout.saveExit': 'Save & exit',
+  'workout.sessionKcal': '{{kcal}} kcal',
+  'workout.summaryKcal': 'Estimated burn this session: ~{{kcal}} kcal',
+  'workout.summaryKcalHint':
+    'Save your weight in Profile to see estimated calories next time.',
+  'workout.summaryKcalProfileLink': 'Profile',
+  'workout.shareImageInstagram': 'Share image (Instagram)',
+  'workout.shareImageWorking': 'Creating image…',
+  'workout.shareImageTitle': 'Sparta workout',
+  'workout.shareImageText': 'Session finished — Sparta',
+  'workout.shareImageHint':
+    '1080×1350 PNG. On mobile: share sheet → Instagram, or save and upload from gallery.',
+  'workout.shareImageError': 'Could not create the image. Try again.',
+  'workout.shareCardActivity': 'Workout',
+  'workout.shareCardDuration': 'Time',
+  'workout.shareCardVolume': 'Sets by exercise',
+  'workout.shareCardXp': 'XP',
+  'workout.shareCardSets': 'Sets',
+  'workout.shareCardMoves': 'Moves',
+  'workout.shareCardKcal': 'kcal',
 
   'rest.title': 'Rest',
   'rest.skip': 'Skip',
   'rest.pause': 'Pause',
   'rest.resume': 'Resume',
   'rest.resetAria': 'Reset rest timer',
+  'rest.hintIntra': 'Same exercise — shorter rest between sets.',
+  'rest.hintInter': 'New exercise — longer rest before the next block.',
 
   'setLogger.holdHint': 'Hold + / − for faster steps (+5 reps or +15s)',
   'setLogger.undoSet': 'Undo set',
@@ -74,6 +97,10 @@ export const en: Record<string, string> = {
   'progress.chartLabelTime': 'Best hold (seconds)',
   'progress.chartLabelSide': 'Best min side (reps)',
   'progress.chartLabelReps': 'Best set (reps)',
+  'progress.totalKcal': 'Estimated energy (all sessions)',
+  'progress.totalKcalValue': '{{kcal}} kcal',
+  'progress.totalKcalHint':
+    'MET × body weight × work time; reps assume a typical tempo per exercise type. Not medical-grade.',
 
   'profile.title': 'Profile',
   'profile.subtitle': 'Level, badges, and your data',
@@ -87,6 +114,27 @@ export const en: Record<string, string> = {
   'profile.language': 'Language',
   'profile.langEn': 'English',
   'profile.langPtBr': 'Português (Brasil)',
+  'profile.bodyTitle': 'Body stats',
+  'profile.bodySubtitle':
+    'Used for BMI and calorie estimates during workouts (weight drives the MET formula).',
+  'profile.bodyAge': 'Age (years)',
+  'profile.bodySex': 'Sex',
+  'profile.bodySexUnspecified': 'Prefer not to say',
+  'profile.bodySexMale': 'Male',
+  'profile.bodySexFemale': 'Female',
+  'profile.bodyHeight': 'Height (cm)',
+  'profile.bodyWeight': 'Weight (kg)',
+  'profile.bodyBmi': 'BMI: {{bmi}}',
+  'profile.bodyBmiHint': 'Enter height and weight to see BMI.',
+  'profile.bodySave': 'Save body stats',
+  'profile.bodyClear': 'Clear',
+  'profile.bodyClearConfirm': 'Remove saved height, weight, age, and sex from this device?',
+  'profile.bodySaved': 'Saved.',
+  'profile.bodyValidation':
+    'Check your numbers: age 14–100, height 80–260 cm, weight 30–250 kg.',
+  'profile.kcalReady': 'Calorie estimates are on for new sets you log.',
+  'profile.kcalNeedWeight':
+    'Enter a valid weight (30–250 kg) and save to enable kcal per set.',
 
   'achievement.title': 'Badge unlocked',
   'achievement.dismiss': 'Dismiss',

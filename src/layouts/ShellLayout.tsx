@@ -9,7 +9,7 @@ export function ShellLayout() {
 
   useEffect(() => {
     document.documentElement.lang = locale === 'pt-BR' ? 'pt-BR' : 'en'
-    document.title = `${t('today.brand')} · Calisthenic`
+    document.title = t('today.brand')
   }, [locale, t])
 
   return (

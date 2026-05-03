@@ -3,6 +3,7 @@ import { StreakBadge } from '@/components/StreakBadge'
 import { XpBar } from '@/components/XpBar'
 import { workoutDayLabel } from '@/i18n/workoutDays'
 import { useTranslation } from '@/i18n/useTranslation'
+import { isProfileCompleteForKcal } from '@/lib/kcal'
 import { getSuggestedDay, useAppStore } from '@/store/useAppStore'
 import { ArrowRight, Play } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
@@ -10,6 +11,7 @@ import { Link, useNavigate } from 'react-router-dom'
 export function TodayPage() {
   const { t, locale } = useTranslation()
   const user = useAppStore((s) => s.user)
+  const showKcalHint = !isProfileCompleteForKcal(user.bodyProfile)
   const activeSession = useAppStore((s) => s.activeSession)
   const startSession = useAppStore((s) => s.startSession)
   const navigate = useNavigate()
@@ -90,6 +92,14 @@ export function TodayPage() {
             {t('today.browseProgram')}
             <ArrowRight className="h-4 w-4" />
           </Link>
+          {showKcalHint ? (
+            <p className="rounded-xl border border-surface-border bg-black/20 px-3 py-2 text-center text-xs text-zinc-500">
+              {t('today.kcalProfileHint')}{' '}
+              <Link to="/profile" className="font-bold text-accent underline">
+                {t('today.kcalProfileLink')}
+              </Link>
+            </p>
+          ) : null}
         </div>
       </section>
     </div>

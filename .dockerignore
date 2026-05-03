@@ -1,0 +1,13 @@
+# Shrink build context; `dist/` must NOT be ignored (required by Dockerfile).
+node_modules
+.git
+.gitignore
+src
+*.md
+.env
+.env.*
+.DS_Store
+*.log
+.vscode
+.idea
+.cursor

@@ -1,4 +1,4 @@
-# Calisthenic — private Betmart host; do not crawl or index.
+# Sparta — private Betmart host; do not crawl or index.
 # Primary signals: <meta name="robots"> in HTML + X-Robots-Tag from nginx.
 User-agent: *
 Disallow: /

@@ -4,7 +4,7 @@ export const ptBR: Record<string, string> = {
   'nav.progress': 'Progresso',
   'nav.profile': 'Perfil',
 
-  'today.brand': 'Calisthenic',
+  'today.brand': 'Sparta',
   'today.heroTitle': 'Treine de verdade',
   'today.heroBody':
     'Seu plano iniciante de 3 meses, progresso salvo neste aparelho, XP e medalhas a cada treino concluído.',
@@ -16,6 +16,9 @@ export const ptBR: Record<string, string> = {
   'today.startWorkout': 'Começar treino',
   'today.resumeWorkout': 'Retomar treino',
   'today.browseProgram': 'Ver programa',
+  'today.kcalProfileHint':
+    'Adicione seu peso em Perfil para estimar calorias (base MET).',
+  'today.kcalProfileLink': 'Abrir Perfil',
 
   'streak.days': 'Sequência de {{n}} dias',
 
@@ -34,12 +37,33 @@ export const ptBR: Record<string, string> = {
     'Você ganhará cerca de {{xp}} XP pelas séries registradas e o bônus de sessão. Você pode registrar mais séries depois iniciando outra sessão no mesmo dia.',
   'workout.keepTraining': 'Continuar treinando',
   'workout.saveExit': 'Salvar e sair',
+  'workout.sessionKcal': '{{kcal}} kcal',
+  'workout.summaryKcal': 'Gasto estimado nesta sessão: ~{{kcal}} kcal',
+  'workout.summaryKcalHint':
+    'Salve seu peso em Perfil para ver calorias estimadas na próxima vez.',
+  'workout.summaryKcalProfileLink': 'Perfil',
+  'workout.shareImageInstagram': 'Compartilhar imagem (Instagram)',
+  'workout.shareImageWorking': 'Gerando imagem…',
+  'workout.shareImageTitle': 'Treino Sparta',
+  'workout.shareImageText': 'Treino concluído — Sparta',
+  'workout.shareImageHint':
+    'PNG 1080×1350. No celular: compartilhar → Instagram, ou salve e publique pela galeria.',
+  'workout.shareImageError': 'Não foi possível criar a imagem. Tente de novo.',
+  'workout.shareCardActivity': 'Treino',
+  'workout.shareCardDuration': 'Tempo',
+  'workout.shareCardVolume': 'Séries por exercício',
+  'workout.shareCardXp': 'XP',
+  'workout.shareCardSets': 'Séries',
+  'workout.shareCardMoves': 'Exercícios',
+  'workout.shareCardKcal': 'kcal',
 
   'rest.title': 'Descanso',
   'rest.skip': 'Pular',
   'rest.pause': 'Pausar',
   'rest.resume': 'Retomar',
   'rest.resetAria': 'Reiniciar cronômetro de descanso',
+  'rest.hintIntra': 'Mesmo exercício — descanso mais curto entre séries.',
+  'rest.hintInter': 'Outro exercício — descanso maior antes do próximo bloco.',
 
   'setLogger.holdHint':
     'Segure + / − para passos mais rápidos (+5 reps ou +15s)',
@@ -75,6 +99,10 @@ export const ptBR: Record<string, string> = {
   'progress.chartLabelTime': 'Melhor tempo (segundos)',
   'progress.chartLabelSide': 'Melhor lado mais fraco (reps)',
   'progress.chartLabelReps': 'Melhor série (reps)',
+  'progress.totalKcal': 'Energia estimada (todas as sessões)',
+  'progress.totalKcalValue': '{{kcal}} kcal',
+  'progress.totalKcalHint':
+    'MET × peso × tempo de esforço; reps usam um ritmo típico por tipo de exercício. Não é valor clínico.',
 
   'profile.title': 'Perfil',
   'profile.subtitle': 'Nível, medalhas e seus dados',
@@ -88,6 +116,28 @@ export const ptBR: Record<string, string> = {
   'profile.language': 'Idioma',
   'profile.langEn': 'English',
   'profile.langPtBr': 'Português (Brasil)',
+  'profile.bodyTitle': 'Dados corporais',
+  'profile.bodySubtitle':
+    'Usados para IMC e estimativa de calorias no treino (o peso entra na fórmula MET).',
+  'profile.bodyAge': 'Idade (anos)',
+  'profile.bodySex': 'Sexo',
+  'profile.bodySexUnspecified': 'Prefiro não informar',
+  'profile.bodySexMale': 'Masculino',
+  'profile.bodySexFemale': 'Feminino',
+  'profile.bodyHeight': 'Altura (cm)',
+  'profile.bodyWeight': 'Peso (kg)',
+  'profile.bodyBmi': 'IMC: {{bmi}}',
+  'profile.bodyBmiHint': 'Informe altura e peso para ver o IMC.',
+  'profile.bodySave': 'Salvar dados corporais',
+  'profile.bodyClear': 'Limpar',
+  'profile.bodyClearConfirm':
+    'Remover altura, peso, idade e sexo salvos neste aparelho?',
+  'profile.bodySaved': 'Salvo.',
+  'profile.bodyValidation':
+    'Confira os valores: idade 14–100, altura 80–260 cm, peso 30–250 kg.',
+  'profile.kcalReady': 'Estimativa de calorias ativa para novas séries.',
+  'profile.kcalNeedWeight':
+    'Informe um peso válido (30–250 kg) e salve para ativar kcal por série.',
 
   'achievement.title': 'Medalha desbloqueada',
   'achievement.dismiss': 'Fechar',

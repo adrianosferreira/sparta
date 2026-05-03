@@ -1,19 +1,27 @@
 import { ExerciseCard } from '@/components/ExerciseCard'
 import { RestTimer } from '@/components/RestTimer'
+import { ShareWorkoutImageButton } from '@/components/ShareWorkoutImageButton'
 import { SetLogger } from '@/components/SetLogger'
 import { getDay } from '@/data/program'
 import { workoutDayLabel } from '@/i18n/workoutDays'
 import { useTranslation } from '@/i18n/useTranslation'
 import { computeSessionXp } from '@/lib/gamification'
+import { isProfileCompleteForKcal, sessionKcalTotal } from '@/lib/kcal'
+import { buildWorkoutShareSnapshot } from '@/lib/workoutSharePayload'
+import {
+  lastTwoLoggedSetsSameExercise,
+  resolveRestSeconds,
+} from '@/lib/restTimes'
 import { useAppStore } from '@/store/useAppStore'
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { ChevronLeft } from 'lucide-react'
+import { ChevronLeft, Flame } from 'lucide-react'
 
 export function WorkoutSessionPage() {
   const { t, locale } = useTranslation()
   const navigate = useNavigate()
   const activeSession = useAppStore((s) => s.activeSession)
+  const bodyProfile = useAppStore((s) => s.user.bodyProfile)
   const logSet = useAppStore((s) => s.logSet)
   const undoLastSet = useAppStore((s) => s.undoLastSet)
   const completeSession = useAppStore((s) => s.completeSession)
@@ -23,6 +31,10 @@ export function WorkoutSessionPage() {
   const [showSummary, setShowSummary] = useState(false)
   const [restKey, setRestKey] = useState(0)
   const [showRest, setShowRest] = useState(false)
+  const [restSeconds, setRestSeconds] = useState(60)
+  const [restVariant, setRestVariant] = useState<'intra' | 'inter' | undefined>(
+    undefined,
+  )
 
   const day = useMemo(() => {
     if (!activeSession) return null
@@ -36,6 +48,41 @@ export function WorkoutSessionPage() {
       completedAt: new Date().toISOString(),
     })
   }, [activeSession])
+
+  const previewKcal = useMemo(() => {
+    if (!activeSession) return undefined
+    return sessionKcalTotal(activeSession.logs)
+  }, [activeSession])
+
+  const kcalEnabled = isProfileCompleteForKcal(bodyProfile)
+
+  const shareSnapshot = useMemo(() => {
+    if (!activeSession || !day) return null
+    const endTime = new Date()
+    return buildWorkoutShareSnapshot({
+      session: activeSession,
+      day,
+      dayTitle: workoutDayLabel(day.id, locale),
+      weekLabel: t('workout.week', { n: activeSession.weekNumber }),
+      locale,
+      getExerciseName: (id) => t(`exercise.${id}`),
+      xp: previewXp,
+      kcal:
+        kcalEnabled && previewKcal != null && previewKcal > 0
+          ? previewKcal
+          : undefined,
+      endTime,
+      labels: {
+        activity: t('workout.shareCardActivity'),
+        duration: t('workout.shareCardDuration'),
+        volume: t('workout.shareCardVolume'),
+        xp: t('workout.shareCardXp'),
+        sets: t('workout.shareCardSets'),
+        moves: t('workout.shareCardMoves'),
+        kcal: t('workout.shareCardKcal'),
+      },
+    })
+  }, [activeSession, day, locale, previewXp, previewKcal, kcalEnabled, t])
 
   if (!activeSession || !day) {
     return (
@@ -56,6 +103,12 @@ export function WorkoutSessionPage() {
   const handleLog = (exerciseId: string) => {
     return (data: Parameters<typeof logSet>[1]) => {
       logSet(exerciseId, data)
+      const session = useAppStore.getState().activeSession
+      if (session) {
+        const intra = lastTwoLoggedSetsSameExercise(session)
+        setRestSeconds(resolveRestSeconds(exerciseId, intra))
+        setRestVariant(intra ? 'intra' : 'inter')
+      }
       setRestKey((k) => k + 1)
       setShowRest(true)
     }
@@ -89,6 +142,12 @@ export function WorkoutSessionPage() {
             </p>
             <h1 className="truncate text-lg font-black text-white">{dayTitle}</h1>
           </div>
+          {kcalEnabled && previewKcal != null && previewKcal > 0 ? (
+            <div className="flex shrink-0 items-center gap-1 rounded-xl border border-surface-border bg-surface-elevated px-2.5 py-1.5 text-xs font-bold text-accent">
+              <Flame className="h-3.5 w-3.5" aria-hidden />
+              <span>{t('workout.sessionKcal', { kcal: previewKcal })}</span>
+            </div>
+          ) : null}
         </div>
       </header>
 
@@ -125,12 +184,23 @@ export function WorkoutSessionPage() {
       </div>
 
       {showRest ? (
-        <div className="mx-auto mt-6 max-w-md px-4">
-          <RestTimer
-            key={restKey}
-            seconds={75}
-            onDismiss={() => setShowRest(false)}
-          />
+        <div
+          className="fixed inset-0 z-40 flex items-center justify-center bg-black/65 p-4 backdrop-blur-sm"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="rest-dialog-title"
+        >
+          <div className="w-full max-w-md">
+            <p id="rest-dialog-title" className="sr-only">
+              {t('rest.title')}
+            </p>
+            <RestTimer
+              key={restKey}
+              seconds={restSeconds}
+              variant={restVariant}
+              onDismiss={() => setShowRest(false)}
+            />
+          </div>
         </div>
       ) : null}
 
@@ -172,7 +242,25 @@ export function WorkoutSessionPage() {
             <p className="mt-2 text-sm text-zinc-400">
               {t('workout.summaryBody', { xp: previewXp })}
             </p>
-            <div className="mt-6 flex gap-2">
+            {kcalEnabled && previewKcal != null && previewKcal > 0 ? (
+              <p className="mt-2 text-sm font-bold text-accent">
+                {t('workout.summaryKcal', { kcal: previewKcal })}
+              </p>
+            ) : !kcalEnabled ? (
+              <p className="mt-2 text-xs text-zinc-500">
+                {t('workout.summaryKcalHint')}{' '}
+                <Link to="/profile" className="font-bold text-accent underline">
+                  {t('workout.summaryKcalProfileLink')}
+                </Link>
+              </p>
+            ) : null}
+            {shareSnapshot ? (
+              <div className="mt-5 space-y-2">
+                <ShareWorkoutImageButton snapshot={shareSnapshot} />
+                <p className="text-center text-xs text-zinc-600">{t('workout.shareImageHint')}</p>
+              </div>
+            ) : null}
+            <div className="mt-5 flex gap-2">
               <button
                 type="button"
                 onClick={() => setShowSummary(false)}
