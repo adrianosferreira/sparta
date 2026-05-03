@@ -18,7 +18,6 @@ export const ptBR: Record<string, string> = {
     'O app é totalmente grátis: sem paywall, sem assinatura e sem anúncios.',
 
   'today.brand': 'Sparta',
-  'today.heroTitle': 'Treine de verdade',
   'today.heroBody':
     'Seu plano iniciante de 3 meses, progresso salvo neste aparelho, XP e medalhas a cada treino concluído.',
   'today.weekOf': 'Semana {{n}} de 12',

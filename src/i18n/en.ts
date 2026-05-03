@@ -18,7 +18,6 @@ export const en: Record<string, string> = {
     'The app is completely free: no paywalls, no subscriptions, and no ads.',
 
   'today.brand': 'Sparta',
-  'today.heroTitle': 'Train like you mean it',
   'today.heroBody':
     'Your 3-month beginner plan, progress saved on this device, XP and badges for every session you finish.',
   'today.weekOf': 'Week {{n}} of 12',

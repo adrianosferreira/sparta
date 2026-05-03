@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="public/images/sparta.png" alt="Sparta" width="200" />
+</p>
+
 # Sparta
 
 **Sparta** is a **mobile-first PWA** for tracking a **12-week beginner calisthenics program** (3 months), logging sets and reps on-device, with **XP, levels, streaks, and badges** to stay motivated. Dark UI tuned for people who love training.

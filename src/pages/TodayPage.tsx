@@ -1,15 +1,18 @@
 import { SectionHeader } from '@/components/SectionHeader'
 import { StreakBadge } from '@/components/StreakBadge'
 import { XpBar } from '@/components/XpBar'
+import { randomSpartaHeroTagline } from '@/i18n/spartaHeroTaglines'
 import { workoutDayLabel } from '@/i18n/workoutDays'
 import { useTranslation } from '@/i18n/useTranslation'
 import { isProfileCompleteForKcal } from '@/lib/kcal'
 import { getSuggestedDay, useAppStore } from '@/store/useAppStore'
 import { ArrowRight, Play } from 'lucide-react'
+import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
 export function TodayPage() {
   const { t, locale } = useTranslation()
+  const [heroTagline] = useState(() => randomSpartaHeroTagline(locale))
   const user = useAppStore((s) => s.user)
   const showKcalHint = !isProfileCompleteForKcal(user.bodyProfile)
   const activeSession = useAppStore((s) => s.activeSession)
@@ -39,7 +42,7 @@ export function TodayPage() {
           {t('today.brand')}
         </p>
         <h1 className="mt-1 text-3xl font-black tracking-tight text-white">
-          {t('today.heroTitle')}
+          {heroTagline}
         </h1>
         <p className="mt-2 max-w-sm text-sm text-zinc-500">{t('today.heroBody')}</p>
       </header>
